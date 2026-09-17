@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eco Checkout</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <main class="checkout-page">
+
+    <!-- Header -->
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-icon">♻</span>
+        <span>EcoCart</span>
+      </div>
+      <span class="secure-label">🔒 Secure checkout</span>
+    </header>
+
+    <!-- Progress -->
+    <nav class="progress" aria-label="Checkout progress">
+      <div class="step active">
+        <span>1</span> Address
+      </div>
+      <div class="progress-line"></div>
+      <div class="step active">
+        <span>2</span> Cart
+      </div>
+      <div class="progress-line"></div>
+      <div class="step active">
+        <span>3</span> Clean up
+      </div>
+      <div class="progress-line"></div>
+      <div class="step">
+        <span>4</span> Payment
+      </div>
+    </nav>
+
+    <!-- Address -->
+    <section class="card address-card">
+      <div class="section-heading">
+        <div>
+          <h1>Complete your order</h1>
+          <p>Where should we deliver your items?</p>
+        </div>
+      </div>
+
+      <form id="address-form" class="address-form">
+        <div class="input-group">
+          <label for="full-name">Full name</label>
+          <input
+            id="full-name"
+            name="fullName"
+            type="text"
+            placeholder="Alex Johnson"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="phone">Phone number</label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            placeholder="+91 98765 43210"
+            required
+          />
+        </div>
+
+        <div class="input-group full-width">
+          <label for="address">Street address</label>
+          <input
+            id="address"
+            name="address"
+            type="text"
+            placeholder="House number, street, apartment"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="city">City</label>
+          <input
+            id="city"
+            name="city"
+            type="text"
+            placeholder="Coimbatore"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="postal-code">Postal code</label>
+          <input
+            id="postal-code"
+            name="postalCode"
+            type="text"
+            placeholder="641001"
+            required
+          />
+        </div>
+      </form>
+    </section>
+
+    <div class="content-grid">
+
+      <!-- Cart -->
+      <section class="card cart-card">
+        <div class="section-heading compact">
+          <h2>Your cart</h2>
+          <span class="item-count">3 items</span>
+        </div>
+
+        <div class="cart-items">
+          <article class="cart-item">
+            <div class="product-image">👟</div>
+            <div class="product-details">
+              <strong>Everyday Sneakers</strong>
+              <span>Size 9 · Qty 1</span>
+            </div>
+            <strong>₹2,499</strong>
+          </article>
+
+          <article class="cart-item">
+            <div class="product-image">🎧</div>
+            <div class="product-details">
+              <strong>Wireless Headphones</strong>
+              <span>Black · Qty 1</span>
+            </div>
+            <strong>₹1,799</strong>
+          </article>
+
+          <article class="cart-item">
+            <div class="product-image">☕</div>
+            <div class="product-details">
+              <strong>Ceramic Travel Mug</strong>
+              <span>Blue · Qty 1</span>
+            </div>
+            <strong>₹699</strong>
+          </article>
+        </div>
+
+        <div class="cart-summary">
+          <div>
+            <span>Subtotal</span>
+            <span>₹4,997</span>
+          </div>
+          <div>
+            <span>Delivery</span>
+            <span class="free">Free</span>
+          </div>
+          <div class="total-row">
+            <strong>Total</strong>
+            <strong>₹4,997</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- Eco interaction -->
+      <section class="card cleanup-card" id="cleanup-card">
+
+        <div class="cleanup-heading">
+          <div>
+            <h2>Sort to checkout <span>♻️</span></h2>
+            <p>Drag all the waste into the bin<br />to unlock your order.</p>
+          </div>
+          <span class="sort-counter" id="sort-counter">0 / 4 sorted</span>
+        </div>
+
+        <div class="cleanup-area" id="cleanup-area">
+
+          <!-- Waste items -->
+          <div
+            class="waste waste-1"
+            draggable="true"
+            data-waste="plastic-bottle"
+            tabindex="0"
+            role="button"
+            aria-label="Plastic bottle. Drag to dustbin or press Enter."
+          >
+            <img
+              src="asset/waste-plastic-bottle.png"
+              alt="Plastic bottle waste"
+            />
+          </div>
+
+          <div
+            class="waste waste-2"
+            draggable="true"
+            data-waste="paper-cup"
+            tabindex="0"
+            role="button"
+            aria-label="Paper cup. Drag to dustbin or press Enter."
+          >
+            <img
+              src="asset/waste-paper-cup.png"
+              alt="Paper cup waste"
+            />
+          </div>
+
+          <div
+            class="waste waste-3"
+            draggable="true"
+            data-waste="crumpled-paper"
+            tabindex="0"
+            role="button"
+            aria-label="Crumpled paper. Drag to dustbin or press Enter."
+          >
+            <img
+              src="asset/waste-crumpled-paper.png"
+              alt="Crumpled paper waste"
+            />
+          </div>
+
+          <div
+            class="waste waste-4"
+            draggable="true"
+            data-waste="snack-wrapper"
+            tabindex="0"
+            role="button"
+            aria-label="Snack wrapper. Drag to dustbin or press Enter."
+          >
+            <img
+              src="asset/waste-snack-wrapper.png"
+              alt="Snack wrapper waste"
+            />
+          </div>
+
+          <!-- Dustbin -->
+          <div
+            class="dustbin-drop-zone"
+            id="dustbin"
+            aria-label="Dustbin. Drop waste here."
+          >
+            <img
+              id="dustbin-image"
+              class="dustbin-image"
+              src="asset/dustbin-closed.png"
+              alt="Closed dustbin"
+            />
+          </div>
+
+        </div>
+
+        <p class="interaction-hint" id="interaction-hint">
+          Drag items into the bin. You can also focus an item and press Enter.
+        </p>
+
+        <div
+          class="success-message"
+          id="success-message"
+          role="status"
+          aria-live="polite"
+        >
+          <span class="success-check">✓</span>
+          <div>
+            <strong>Everything is sorted!</strong>
+            <span>Your checkout is ready.</span>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- Footer action -->
+    <footer class="checkout-footer">
+      <span class="security-note">🔒 Your details are protected</span>
+      <button
+        class="checkout-button"
+        id="checkout-button"
+        type="button"
+        disabled
+      >
+        Proceed to checkout <span>→</span>
+      </button>
+    </footer>
+
+    <p class="demo-message" id="demo-message" role="status" aria-live="polite"></p>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
