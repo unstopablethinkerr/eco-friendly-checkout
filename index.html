@@ -3,285 +3,1341 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eco Checkout</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>EcoCart — Checkout</title>
+
+  <style>
+    /* ========================================
+       RESET & VARIABLES
+    ======================================== */
+
+    :root {
+      --bg: #f3f6fa;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #172033;
+      --muted: #667085;
+      --border: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --green: #16a34a;
+      --green-dark: #15803d;
+      --green-soft: #dcfce7;
+      --blue-soft: #eff6ff;
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* ========================================
+       PAGE & HEADER
+    ======================================== */
+
+    .page {
+      width: min(100% - 32px, 900px);
+      margin: 0 auto;
+      padding: 30px 0 50px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-size: 19px;
+    }
+
+    .secure-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* ========================================
+       PROGRESS
+    ======================================== */
+
+    .progress {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+      overflow-x: auto;
+      padding-bottom: 3px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #98a2b3;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .step-number {
+      width: 27px;
+      height: 27px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      font-size: 11px;
+    }
+
+    .step.active {
+      color: var(--text);
+    }
+
+    .step.active .step-number {
+      color: #fff;
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .progress-line {
+      width: 30px;
+      height: 1px;
+      flex-shrink: 0;
+      background: var(--border);
+    }
+
+    /* ========================================
+       CARD SYSTEM
+    ======================================== */
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.025);
+    }
+
+    .card + .card {
+      margin-top: 16px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+    }
+
+    .card-description {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .card-badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--surface-soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    /* ========================================
+       ADDRESS CARD
+    ======================================== */
+
+    .address-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      color: #344054;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
+      min-height: 44px;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .field input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    /* ========================================
+       CART CARD
+    ======================================== */
+
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .product-thumbnail {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border-radius: 13px;
+      background: #f1f5f9;
+      font-size: 26px;
+    }
+
+    .product-info {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .product-name {
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .product-meta {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .product-price {
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .cart-divider {
+      height: 1px;
+      margin: 20px 0 16px;
+      background: var(--border);
+    }
+
+    .price-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      font-size: 13px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .price-row .label {
+      color: var(--muted);
+    }
+
+    .free {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding-top: 4px;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    /* ========================================
+       CLEAN-UP CARD
+    ======================================== */
+
+    .cleanup-card {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, #f0fdf4 0%, #eff6ff 100%);
+      border-color: #dbeafe;
+    }
+
+    .cleanup-card.completed {
+      border-color: #bbf7d0;
+      background:
+        linear-gradient(145deg, #f0fdf4 0%, #f0fdf4 100%);
+    }
+
+    .cleanup-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .cleanup-title {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: -0.03em;
+    }
+
+    .cleanup-description {
+      margin: 7px 0 0;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .sort-counter {
+      padding: 7px 10px;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .75);
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .cleanup-area {
+      position: relative;
+      height: 330px;
+      margin-top: 5px;
+      isolation: isolate;
+    }
+
+    /* Dustbin */
+
+    .dustbin-drop-zone {
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      width: 150px;
+      height: 155px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      transform: translateX(-50%);
+      z-index: 2;
+      transition:
+        transform .2s ease,
+        filter .2s ease;
+    }
+
+    .dustbin-drop-zone.drag-over {
+      transform: translateX(-50%) scale(1.1);
+      filter: drop-shadow(0 8px 14px rgba(37, 99, 235, .25));
+    }
+
+    .dustbin-image {
+      width: 150px;
+      height: 155px;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Waste */
+
+    .waste {
+      position: absolute;
+      z-index: 5;
+      width: 66px;
+      height: 66px;
+      display: grid;
+      place-items: center;
+      padding: 6px;
+      border: 1px solid rgba(148, 163, 184, .35);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, .08);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transition:
+        opacity .25s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+    }
+
+    .waste img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .waste:hover {
+      box-shadow: 0 10px 22px rgba(15, 23, 42, .13);
+      transform: translateY(-4px) rotate(-3deg);
+    }
+
+    .waste:focus-visible {
+      outline: 3px solid #93c5fd;
+      outline-offset: 3px;
+    }
+
+    .waste.dragging {
+      opacity: .78;
+      cursor: grabbing;
+      transform: scale(1.12) rotate(5deg);
+      z-index: 20;
+    }
+
+    .waste.removing {
+      pointer-events: none;
+      animation: dropIntoBin .48s ease forwards;
+    }
+
+    @keyframes dropIntoBin {
+      0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+      55% {
+        opacity: .85;
+        transform: scale(.7) translateY(35px);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(.1) translateY(105px);
+      }
+    }
+
+    .waste-1 {
+      top: 22px;
+      left: 8%;
+      transform: rotate(-12deg);
+    }
+
+    .waste-2 {
+      top: 38px;
+      right: 8%;
+      transform: rotate(13deg);
+    }
+
+    .waste-3 {
+      top: 160px;
+      left: 20%;
+      transform: rotate(7deg);
+    }
+
+    .waste-4 {
+      top: 175px;
+      right: 20%;
+      transform: rotate(-8deg);
+    }
+
+    .interaction-hint {
+      margin: 0;
+      color: #64748b;
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    /* Success */
+
+    .success-message {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 11px;
+      margin-top: 16px;
+      padding: 13px;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      background: var(--green-soft);
+      color: #166534;
+      animation: successIn .35s ease;
+    }
+
+    .success-message.show {
+      display: flex;
+    }
+
+    .success-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--green);
+      color: #fff;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .success-content strong,
+    .success-content span {
+      display: block;
+    }
+
+    .success-content strong {
+      font-size: 13px;
+    }
+
+    .success-content span {
+      margin-top: 3px;
+      color: #15803d;
+      font-size: 11px;
+    }
+
+    @keyframes successIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ========================================
+       CHECKOUT ACTION
+    ======================================== */
+
+    .checkout-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .security-note {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .checkout-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 46px;
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 11px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 750;
+      transition:
+        background .2s ease,
+        opacity .2s ease,
+        transform .2s ease;
+    }
+
+    .checkout-button:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .checkout-button:disabled {
+      cursor: not-allowed;
+      opacity: .45;
+    }
+
+    .demo-message {
+      min-height: 20px;
+      margin: 11px 0 0;
+      color: var(--green-dark);
+      text-align: right;
+      font-size: 12px;
+    }
+
+    /* ========================================
+       RESPONSIVE
+    ======================================== */
+
+    @media (max-width: 700px) {
+      .page {
+        width: min(100% - 24px, 560px);
+        padding-top: 20px;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .checkout-footer {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .checkout-button {
+        width: 100%;
+      }
+
+      .security-note {
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 18px;
+      }
+
+      .header {
+        margin-bottom: 22px;
+      }
+
+      .secure-label {
+        font-size: 11px;
+      }
+
+      .progress {
+        justify-content: flex-start;
+      }
+
+      .address-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .cleanup-area {
+        height: 290px;
+      }
+
+      .waste {
+        width: 55px;
+        height: 55px;
+      }
+
+      .dustbin-drop-zone {
+        width: 125px;
+        height: 135px;
+      }
+
+      .dustbin-image {
+        width: 125px;
+        height: 135px;
+      }
+
+      .waste-3 {
+        left: 12%;
+      }
+
+      .waste-4 {
+        right: 12%;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-  <main class="checkout-page">
+  <main class="page">
 
-    <!-- Header -->
-    <header class="site-header">
+    <!-- ========================================
+         HEADER
+    ======================================== -->
+
+    <header class="header">
       <div class="brand">
-        <span class="brand-icon">♻</span>
+        <span class="brand-mark">♻</span>
         <span>EcoCart</span>
       </div>
+
       <span class="secure-label">🔒 Secure checkout</span>
     </header>
 
-    <!-- Progress -->
+    <!-- ========================================
+         CHECKOUT PROGRESS
+    ======================================== -->
+
     <nav class="progress" aria-label="Checkout progress">
       <div class="step active">
-        <span>1</span> Address
+        <span class="step-number">1</span>
+        <span>Address</span>
       </div>
+
       <div class="progress-line"></div>
+
       <div class="step active">
-        <span>2</span> Cart
+        <span class="step-number">2</span>
+        <span>Cart</span>
       </div>
+
       <div class="progress-line"></div>
+
       <div class="step active">
-        <span>3</span> Clean up
+        <span class="step-number">3</span>
+        <span>Clean up</span>
       </div>
+
       <div class="progress-line"></div>
+
       <div class="step">
-        <span>4</span> Payment
+        <span class="step-number">4</span>
+        <span>Payment</span>
       </div>
     </nav>
 
-    <!-- Address -->
+    <!-- ========================================
+         ADDRESS CARD
+    ======================================== -->
+
     <section class="card address-card">
-      <div class="section-heading">
+
+      <div class="card-header">
         <div>
-          <h1>Complete your order</h1>
-          <p>Where should we deliver your items?</p>
+          <h1 class="card-title">Delivery address</h1>
+          <p class="card-description">
+            Confirm where your order should be delivered.
+          </p>
         </div>
+
+        <span class="card-badge">Step 1</span>
       </div>
 
-      <form id="address-form" class="address-form">
-        <div class="input-group">
-          <label for="full-name">Full name</label>
-          <input
-            id="full-name"
-            name="fullName"
-            type="text"
-            placeholder="Alex Johnson"
-            required
-          />
-        </div>
+      <form id="address-form">
+        <div class="address-grid">
 
-        <div class="input-group">
-          <label for="phone">Phone number</label>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            placeholder="+91 98765 43210"
-            required
-          />
-        </div>
+          <div class="field">
+            <label for="full-name">Full name</label>
+            <input
+              id="full-name"
+              name="fullName"
+              type="text"
+              value="Jordan Mitchell"
+              placeholder="Your full name"
+              autocomplete="name"
+              required
+            />
+          </div>
 
-        <div class="input-group full-width">
-          <label for="address">Street address</label>
-          <input
-            id="address"
-            name="address"
-            type="text"
-            placeholder="House number, street, apartment"
-            required
-          />
-        </div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              value="+1 415 555 0186"
+              placeholder="Your phone number"
+              autocomplete="tel"
+              required
+            />
+          </div>
 
-        <div class="input-group">
-          <label for="city">City</label>
-          <input
-            id="city"
-            name="city"
-            type="text"
-            placeholder="Coimbatore"
-            required
-          />
-        </div>
+          <div class="field full">
+            <label for="street-address">Street address</label>
+            <input
+              id="street-address"
+              name="streetAddress"
+              type="text"
+              value="2458 Maplewood Avenue, Apartment 4B"
+              placeholder="House number, street, apartment"
+              autocomplete="street-address"
+              required
+            />
+          </div>
 
-        <div class="input-group">
-          <label for="postal-code">Postal code</label>
-          <input
-            id="postal-code"
-            name="postalCode"
-            type="text"
-            placeholder="641001"
-            required
-          />
+          <div class="field">
+            <label for="city">City</label>
+            <input
+              id="city"
+              name="city"
+              type="text"
+              value="Portland"
+              placeholder="City"
+              autocomplete="address-level2"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="postal-code">Postal code</label>
+            <input
+              id="postal-code"
+              name="postalCode"
+              type="text"
+              value="97205"
+              placeholder="Postal code"
+              autocomplete="postal-code"
+              required
+            />
+          </div>
+
         </div>
       </form>
     </section>
 
-    <div class="content-grid">
+    <!-- ========================================
+         CART CARD
+    ======================================== -->
 
-      <!-- Cart -->
-      <section class="card cart-card">
-        <div class="section-heading compact">
-          <h2>Your cart</h2>
-          <span class="item-count">3 items</span>
+    <section class="card cart-card">
+
+      <div class="card-header">
+        <div>
+          <h2 class="card-title">Order summary</h2>
+          <p class="card-description">
+            Review the items in your shopping cart.
+          </p>
         </div>
 
-        <div class="cart-items">
-          <article class="cart-item">
-            <div class="product-image">👟</div>
-            <div class="product-details">
-              <strong>Everyday Sneakers</strong>
-              <span>Size 9 · Qty 1</span>
-            </div>
-            <strong>₹2,499</strong>
-          </article>
+        <span class="card-badge">3 items</span>
+      </div>
 
-          <article class="cart-item">
-            <div class="product-image">🎧</div>
-            <div class="product-details">
-              <strong>Wireless Headphones</strong>
-              <span>Black · Qty 1</span>
-            </div>
-            <strong>₹1,799</strong>
-          </article>
+      <div class="cart-items">
 
-          <article class="cart-item">
-            <div class="product-image">☕</div>
-            <div class="product-details">
-              <strong>Ceramic Travel Mug</strong>
-              <span>Blue · Qty 1</span>
-            </div>
-            <strong>₹699</strong>
-          </article>
+        <article class="cart-item">
+          <div class="product-thumbnail">👟</div>
+
+          <div class="product-info">
+            <span class="product-name">Everyday Sneakers</span>
+            <span class="product-meta">Size 9 · Black · Qty 1</span>
+          </div>
+
+          <span class="product-price">$49.00</span>
+        </article>
+
+        <article class="cart-item">
+          <div class="product-thumbnail">🎧</div>
+
+          <div class="product-info">
+            <span class="product-name">Wireless Headphones</span>
+            <span class="product-meta">Midnight · Qty 1</span>
+          </div>
+
+          <span class="product-price">$35.00</span>
+        </article>
+
+        <article class="cart-item">
+          <div class="product-thumbnail">☕</div>
+
+          <div class="product-info">
+            <span class="product-name">Ceramic Travel Mug</span>
+            <span class="product-meta">Ocean Blue · Qty 1</span>
+          </div>
+
+          <span class="product-price">$14.00</span>
+        </article>
+
+      </div>
+
+      <div class="cart-divider"></div>
+
+      <div class="price-summary">
+        <div class="price-row">
+          <span class="label">Subtotal</span>
+          <span>$98.00</span>
         </div>
 
-        <div class="cart-summary">
-          <div>
-            <span>Subtotal</span>
-            <span>₹4,997</span>
-          </div>
-          <div>
-            <span>Delivery</span>
-            <span class="free">Free</span>
-          </div>
-          <div class="total-row">
-            <strong>Total</strong>
-            <strong>₹4,997</strong>
-          </div>
-        </div>
-      </section>
-
-      <!-- Eco interaction -->
-      <section class="card cleanup-card" id="cleanup-card">
-
-        <div class="cleanup-heading">
-          <div>
-            <h2>Sort to checkout <span>♻️</span></h2>
-            <p>Drag all the waste into the bin<br />to unlock your order.</p>
-          </div>
-          <span class="sort-counter" id="sort-counter">0 / 4 sorted</span>
+        <div class="price-row">
+          <span class="label">Shipping</span>
+          <span class="free">Free</span>
         </div>
 
-        <div class="cleanup-area" id="cleanup-area">
+        <div class="total-row">
+          <span>Total</span>
+          <span>$98.00</span>
+        </div>
+      </div>
 
-          <!-- Waste items -->
-          <div
-            class="waste waste-1"
-            draggable="true"
-            data-waste="plastic-bottle"
-            tabindex="0"
-            role="button"
-            aria-label="Plastic bottle. Drag to dustbin or press Enter."
-          >
-            <img
-              src="asset/waste-plastic-bottle.png"
-              alt="Plastic bottle waste"
-            />
-          </div>
+    </section>
 
-          <div
-            class="waste waste-2"
-            draggable="true"
-            data-waste="paper-cup"
-            tabindex="0"
-            role="button"
-            aria-label="Paper cup. Drag to dustbin or press Enter."
-          >
-            <img
-              src="asset/waste-paper-cup.png"
-              alt="Paper cup waste"
-            />
-          </div>
+    <!-- ========================================
+         INTERACTIVE CLEAN-UP CARD
+    ======================================== -->
 
-          <div
-            class="waste waste-3"
-            draggable="true"
-            data-waste="crumpled-paper"
-            tabindex="0"
-            role="button"
-            aria-label="Crumpled paper. Drag to dustbin or press Enter."
-          >
-            <img
-              src="asset/waste-crumpled-paper.png"
-              alt="Crumpled paper waste"
-            />
-          </div>
+    <section class="card cleanup-card" id="cleanup-card">
 
-          <div
-            class="waste waste-4"
-            draggable="true"
-            data-waste="snack-wrapper"
-            tabindex="0"
-            role="button"
-            aria-label="Snack wrapper. Drag to dustbin or press Enter."
-          >
-            <img
-              src="asset/waste-snack-wrapper.png"
-              alt="Snack wrapper waste"
-            />
-          </div>
-
-          <!-- Dustbin -->
-          <div
-            class="dustbin-drop-zone"
-            id="dustbin"
-            aria-label="Dustbin. Drop waste here."
-          >
-            <img
-              id="dustbin-image"
-              class="dustbin-image"
-              src="asset/dustbin-closed.png"
-              alt="Closed dustbin"
-            />
-          </div>
-
+      <div class="cleanup-header">
+        <div>
+          <h2 class="cleanup-title">Sort to checkout ♻️</h2>
+          <p class="cleanup-description">
+            A little clean-up before your order goes through.<br />
+            Drag each waste item into the dustbin.
+          </p>
         </div>
 
-        <p class="interaction-hint" id="interaction-hint">
-          Drag items into the bin. You can also focus an item and press Enter.
-        </p>
+        <span class="sort-counter" id="sort-counter">0 / 4 sorted</span>
+      </div>
 
+      <div class="cleanup-area" id="cleanup-area">
+
+        <!-- Waste 1: Plastic bottle -->
         <div
-          class="success-message"
-          id="success-message"
-          role="status"
-          aria-live="polite"
+          class="waste waste-1"
+          draggable="true"
+          data-waste="plastic-bottle"
+          tabindex="0"
+          role="button"
+          aria-label="Plastic bottle. Drag to dustbin or press Enter."
         >
-          <span class="success-check">✓</span>
-          <div>
-            <strong>Everything is sorted!</strong>
-            <span>Your checkout is ready.</span>
-          </div>
+          <img
+            src="asset/waste-plastic-bottle.png"
+            alt="Plastic bottle waste"
+          />
         </div>
 
-      </section>
-    </div>
+        <!-- Waste 2: Paper cup -->
+        <div
+          class="waste waste-2"
+          draggable="true"
+          data-waste="paper-cup"
+          tabindex="0"
+          role="button"
+          aria-label="Paper cup. Drag to dustbin or press Enter."
+        >
+          <img
+            src="asset/waste-paper-cup.png"
+            alt="Paper cup waste"
+          />
+        </div>
 
-    <!-- Footer action -->
+        <!-- Waste 3: Crumpled paper -->
+        <div
+          class="waste waste-3"
+          draggable="true"
+          data-waste="crumpled-paper"
+          tabindex="0"
+          role="button"
+          aria-label="Crumpled paper. Drag to dustbin or press Enter."
+        >
+          <img
+            src="asset/waste-crumpled-paper.png"
+            alt="Crumpled paper waste"
+          />
+        </div>
+
+        <!-- Waste 4: Snack wrapper -->
+        <div
+          class="waste waste-4"
+          draggable="true"
+          data-waste="snack-wrapper"
+          tabindex="0"
+          role="button"
+          aria-label="Snack wrapper. Drag to dustbin or press Enter."
+        >
+          <img
+            src="asset/waste-snack-wrapper.png"
+            alt="Snack wrapper waste"
+          />
+        </div>
+
+        <!-- Dustbin -->
+        <div
+          class="dustbin-drop-zone"
+          id="dustbin"
+          aria-label="Dustbin drop zone"
+        >
+          <img
+            id="dustbin-image"
+            class="dustbin-image"
+            src="asset/dustbin-closed.png"
+            alt="Closed dustbin"
+          />
+        </div>
+
+      </div>
+
+      <p class="interaction-hint" id="interaction-hint">
+        Drag items into the bin. You can also focus an item and press Enter.
+      </p>
+
+      <div
+        class="success-message"
+        id="success-message"
+        role="status"
+        aria-live="polite"
+      >
+        <span class="success-icon">✓</span>
+
+        <div class="success-content">
+          <strong>Everything is sorted!</strong>
+          <span>Your checkout is ready to continue.</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================
+         CHECKOUT ACTION
+    ======================================== -->
+
     <footer class="checkout-footer">
-      <span class="security-note">🔒 Your details are protected</span>
+      <span class="security-note">
+        🔒 Your details are protected
+      </span>
+
       <button
         class="checkout-button"
         id="checkout-button"
         type="button"
         disabled
       >
-        Proceed to checkout <span>→</span>
+        <span>Proceed to checkout</span>
+        <span>→</span>
       </button>
     </footer>
 
-    <p class="demo-message" id="demo-message" role="status" aria-live="polite"></p>
+    <p
+      class="demo-message"
+      id="demo-message"
+      role="status"
+      aria-live="polite"
+    ></p>
 
   </main>
 
-  <script src="script.js"></script>
+  <!-- ========================================
+       JAVASCRIPT
+  ======================================== -->
+
+  <script>
+    (() => {
+      "use strict";
+
+      /* ----------------------------------------
+         ELEMENTS
+      ---------------------------------------- */
+
+      const dustbin = document.getElementById("dustbin");
+      const dustbinImage = document.getElementById("dustbin-image");
+      const cleanupArea = document.getElementById("cleanup-area");
+      const cleanupCard = document.getElementById("cleanup-card");
+      const sortCounter = document.getElementById("sort-counter");
+      const successMessage = document.getElementById("success-message");
+      const interactionHint = document.getElementById("interaction-hint");
+      const checkoutButton = document.getElementById("checkout-button");
+      const demoMessage = document.getElementById("demo-message");
+      const addressForm = document.getElementById("address-form");
+
+      const wasteItems = [
+        ...document.querySelectorAll(".waste")
+      ];
+
+      /* ----------------------------------------
+         STATE
+      ---------------------------------------- */
+
+      let sortedCount = 0;
+      let activeWaste = null;
+      let pointerOffsetX = 0;
+      let pointerOffsetY = 0;
+
+      /* ----------------------------------------
+         DUSTBIN OPEN / CLOSE
+      ---------------------------------------- */
+
+      function openDustbin() {
+        dustbinImage.src = "asset/dustbin-open.png";
+        dustbinImage.alt = "Open dustbin";
+        dustbin.classList.add("drag-over");
+      }
+
+      function closeDustbin() {
+        dustbinImage.src = "asset/dustbin-closed.png";
+        dustbinImage.alt = "Closed dustbin";
+        dustbin.classList.remove("drag-over");
+      }
+
+      /* ----------------------------------------
+         BIN COLLISION CHECK
+      ---------------------------------------- */
+
+      function isInsideDustbin(clientX, clientY) {
+        const rect = dustbin.getBoundingClientRect();
+
+        return (
+          clientX >= rect.left - 20 &&
+          clientX <= rect.right + 20 &&
+          clientY >= rect.top - 20 &&
+          clientY <= rect.bottom + 20
+        );
+      }
+
+      /* ----------------------------------------
+         RESET WASTE POSITION
+      ---------------------------------------- */
+
+      function resetWastePosition(item) {
+        item.style.left = "";
+        item.style.top = "";
+        item.style.right = "";
+        item.style.transform = "";
+        item.classList.remove("dragging");
+      }
+
+      /* ----------------------------------------
+         SORT WASTE INTO BIN
+      ---------------------------------------- */
+
+      function sortWaste(item) {
+        if (!item || item.classList.contains("removing")) {
+          return;
+        }
+
+        item.classList.remove("dragging");
+        item.classList.add("removing");
+
+        sortedCount++;
+
+        sortCounter.textContent =
+          `${sortedCount} / ${wasteItems.length} sorted`;
+
+        if (sortedCount < wasteItems.length) {
+          interactionHint.textContent = "Nice! Keep going.";
+        }
+
+        setTimeout(() => {
+          item.style.display = "none";
+        }, 480);
+
+        if (sortedCount === wasteItems.length) {
+          setTimeout(() => {
+            cleanupCard.classList.add("completed");
+            successMessage.classList.add("show");
+            interactionHint.textContent = "";
+            checkoutButton.disabled = false;
+          }, 480);
+        }
+      }
+
+      /* ----------------------------------------
+         DESKTOP DRAG & DROP
+      ---------------------------------------- */
+
+      wasteItems.forEach((item) => {
+        item.addEventListener("dragstart", (event) => {
+          activeWaste = item;
+          item.classList.add("dragging");
+
+          event.dataTransfer.effectAllowed = "move";
+          event.dataTransfer.setData(
+            "text/plain",
+            item.dataset.waste
+          );
+
+          openDustbin();
+        });
+
+        item.addEventListener("dragend", () => {
+          item.classList.remove("dragging");
+          closeDustbin();
+          activeWaste = null;
+        });
+
+        item.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            sortWaste(item);
+          }
+        });
+      });
+
+      dustbin.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        openDustbin();
+        event.dataTransfer.dropEffect = "move";
+      });
+
+      dustbin.addEventListener("dragleave", () => {
+        closeDustbin();
+      });
+
+      dustbin.addEventListener("drop", (event) => {
+        event.preventDefault();
+
+        const item = activeWaste;
+
+        closeDustbin();
+
+        if (item) {
+          sortWaste(item);
+        }
+
+        activeWaste = null;
+      });
+
+      /* ----------------------------------------
+         TOUCH / POINTER DRAG
+      ---------------------------------------- */
+
+      wasteItems.forEach((item) => {
+        item.addEventListener("pointerdown", (event) => {
+          if (item.classList.contains("removing")) {
+            return;
+          }
+
+          event.preventDefault();
+
+          activeWaste = item;
+
+          const rect = item.getBoundingClientRect();
+
+          pointerOffsetX = event.clientX - rect.left;
+          pointerOffsetY = event.clientY - rect.top;
+
+          item.classList.add("dragging");
+
+          item.setPointerCapture?.(event.pointerId);
+        });
+
+        item.addEventListener("pointermove", (event) => {
+          if (activeWaste !== item) {
+            return;
+          }
+
+          const areaRect = cleanupArea.getBoundingClientRect();
+
+          item.style.left =
+            `${event.clientX - areaRect.left - pointerOffsetX}px`;
+
+          item.style.top =
+            `${event.clientY - areaRect.top - pointerOffsetY}px`;
+
+          item.style.right = "auto";
+          item.style.transform = "scale(1.12) rotate(5deg)";
+
+          if (isInsideDustbin(event.clientX, event.clientY)) {
+            openDustbin();
+          } else {
+            closeDustbin();
+          }
+        });
+
+        item.addEventListener("pointerup", (event) => {
+          if (activeWaste !== item) {
+            return;
+          }
+
+          const droppedInBin = isInsideDustbin(
+            event.clientX,
+            event.clientY
+          );
+
+          if (droppedInBin) {
+            openDustbin();
+            sortWaste(item);
+
+            setTimeout(() => {
+              closeDustbin();
+            }, 500);
+          } else {
+            resetWastePosition(item);
+            closeDustbin();
+          }
+
+          activeWaste = null;
+        });
+
+        item.addEventListener("pointercancel", () => {
+          resetWastePosition(item);
+          closeDustbin();
+          activeWaste = null;
+        });
+      });
+
+      /* ----------------------------------------
+         CHECKOUT BUTTON
+      ---------------------------------------- */
+
+      checkoutButton.addEventListener("click", () => {
+        if (!addressForm.checkValidity()) {
+          addressForm.reportValidity();
+          return;
+        }
+
+        const customerName =
+          document.getElementById("full-name").value.trim();
+
+        demoMessage.textContent =
+          `Demo: payment step is ready for ${customerName} ✓`;
+
+        checkoutButton.innerHTML =
+          "<span>Payment step ready</span><span>✓</span>";
+
+        checkoutButton.disabled = true;
+      });
+
+    })();
+  </script>
+
 </body>
 </html>
